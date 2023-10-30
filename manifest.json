@@ -1,0 +1,47 @@
+{
+    "name": "Youtube Chat Eye",
+    "version": "1.7.5",
+    "author": "MEGPOID",
+    "description": "Catch deleted messages",
+    "manifest_version": 3,
+    "icons": {
+        "128": "/icons/icon_128.png",
+        "48": "/icons/icon_48.png",
+        "32": "/icons/icon_32.png",
+        "16": "/icons/icon_16.png"
+    },
+    "action":{
+        "default_popup": "popup.html",
+        "default_title": "Youtube Chat Eye"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://www.youtube.com/live_chat?*"
+            ],
+            "run_at": "document_start",
+            "js": [
+                "content_iframe.js"
+            ],
+            "all_frames" : true
+        }
+    ],
+    "permissions": [
+        "storage", 
+    	"unlimitedStorage",
+        "notifications"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["fetchInterceptor.js"],
+            "matches": ["*://www.youtube.com/*"]
+        }
+    ],
+    "externally_connectable": {
+        "matches": ["*://www.youtube.com/*"]
+    },
+    "options_page": "settings.html"
+} 

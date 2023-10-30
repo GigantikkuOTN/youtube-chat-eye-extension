@@ -1,0 +1,65 @@
+<html>
+<head>
+    <title>Youtube Chat Eye Settings</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+    	body {
+    		background: #171819;
+    		min-width:500px;
+    	}
+
+    	.buttons {
+    		padding:5px;
+            background:#141719
+    	}
+
+        .buttons__custom {
+            background-color:#b5bac1;
+            color:#383a40;
+            border: none;
+            padding: 5px;
+            border-radius: 3px;
+            margin-right: 10px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
+
+        .buttons__custom:hover {
+            background-color:#ffffff;
+            color:#000000;
+        }
+
+        .content {
+            padding:5px;
+            background:#161616;
+        }
+
+        .title {
+            background: #0e1011;
+            color:#ffffff;
+            padding: 5px;
+            margin: 0px;
+            font-weight: bold;
+        }
+
+        .content__item {
+            color: #b8b8b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">
+        <center>Settings</center>
+    </div>
+	<div class="buttons">
+        <button class="buttons__custom" id="save">Save</button>
+    </div>
+    <div class="content">
+        <label class="content__item">
+            <input type="checkbox" id="notifications">
+            Уведомлять об удаленных сообщениях
+        </label>
+    </div>
+    <script src="settings.js"></script>
+</body>
+</html> 

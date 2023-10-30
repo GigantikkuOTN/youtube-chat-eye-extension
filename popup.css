@@ -1,0 +1,106 @@
+:root {
+    --title-bg-color: #0e1011;
+    --title-text-color: #ffffff;
+    --bg-color: #171819;
+    --buttons-bg-color: #141719;
+    --button-bg-color: #b5bac1;
+    --button-bg-hover-color: #DADDE0;
+    --button-text-color: #383a40;
+    --button-text-hover-color: #000000;
+    --msg-item-bg-odd-color: #1e1f22;
+    --msg-item-bg-even-color: #2a2b2f;
+    --msg-list-bg-color: #161616;
+    --msg-item-text-color: #b8b8b8;
+    --width: 500px;
+    --font-size: 14px;
+    --font-size-list: 12px;
+    --button-margin: 4px;
+}
+
+body {
+    background: var(--bg-color);
+    width: var(--width);
+}
+
+.buttons {
+    display: flex;
+    padding: 5px;
+    background: var(--buttons-bg-color);
+    align-items: center;
+}
+
+.customButton {
+    margin-left: var(--button-margin);
+    font-size: var(--font-size);
+    background-color: var(--button-bg-color);
+    color: var(--button-text-color);
+    /* width: 80px; */
+    border: none;
+    padding: 5px;
+    border-radius: 3px;
+    margin-right: var(--button-margin);
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.customButton:hover {
+    background-color:var(--button-bg-hover-color);
+    color:var(--button-text-hover-color);
+}
+
+#streamLists {
+    flex: 1;
+}
+
+.messages__item {
+    padding:3px;
+}
+
+.messages__item:nth-child(odd) {
+    background: var(--msg-item-bg-odd-color);
+}
+
+.messages__item:nth-child(even) {
+    background:var(--msg-item-bg-even-color);
+}
+
+.messages {
+    box-sizing: border-box;
+    font-size: var(--font-size-list);
+    max-height: var(--width);
+    background: var(--msg-list-bg-color);
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.title {
+    font-size: var(--font-size);
+    background: var(--title-bg-color);
+    color: var(--title-text-color);
+    padding: 5px;
+    margin: 0px;
+    font-weight: bold;
+}
+
+.title__icon {
+    vertical-align: middle;
+}
+
+.messages__author {
+    color:var(--msg-item-text-color);
+    font-weight: bold;
+}
+
+.messages__message-text {
+    color:var(--msg-item-text-color);
+    word-break: break-all;
+    selector {
+        word-wrap: break-word;      /* IE 5.5-7 */
+        white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+        white-space: pre-wrap;      /* current browsers */
+    };
+}
+
+.messages__semi {
+    color:var(--title-text-color);
+}
