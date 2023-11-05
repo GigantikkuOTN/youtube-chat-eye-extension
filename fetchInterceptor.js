@@ -337,6 +337,7 @@ function YCE_actionMuteBan(channelId) {
 
     console.log('[YCE_actionMuteBan] Muted or Banned user: ' + JSON.stringify(messageItem));
     YCE_actionAdd(saveData_YCE, messageId, messageItem);
+    YCE_actionAdd(tmpData_YCE, messageId, messageItem);
     YCE_sendMessage(
         EVENT_TYPES_YCE.NOTIFICATION, 
         {
