@@ -7,7 +7,9 @@ function addItem(author, message, isImportant, isMod, isOwner) {
 	let content = document.getElementById('content');
 
 	let blockElement = document.createElement("div");
-    if (!document.location.href.endsWith("popup.html")) {
+    if (isPopup()) {
+        blockElement.setAttribute("class", "messages__item");
+    } else {
         if (isImportant) {
             blockElement.setAttribute("class", "messages__item important");
         } else {
@@ -290,6 +292,14 @@ function loadListData(onlyImportant, author, listName) {
 
 function isIgnored(text) {
     return IGNORE.includes(text);
+}
+
+function isPopup() {
+    return document.location.href.endsWith("popup.html");
+}
+
+function isMain() {
+    return document.location.href.endsWith("main.html");
 }
 
 export {
