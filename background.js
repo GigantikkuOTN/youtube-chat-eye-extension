@@ -1,5 +1,4 @@
 const MESSAGE_TYPES = { NOTIFICATION:0, SETTINGS_CHANGED: 1, SAVE_DATA: 2, GET_DATA: 3, CLEAR: 4 };
-const PREFIX = { STORE: "STORE_", TMP: "TMP_" };
 let enableNotifications = false;
 
 chrome.runtime.onMessage.addListener(
@@ -16,8 +15,7 @@ chrome.runtime.onMessage.addListener(
             console.log('OnMessage save data');
             chrome.storage.local.set(
                 {
-                    [PREFIX.STORE + request.data.stream_Id]: request.data.store,
-                    [PREFIX.TMP + request.data.stream_Id]: request.data.tmp
+                    [request.data.stream_Id]: request.data.savedata
                 }
             );
         } else if (request.type == MESSAGE_TYPES.GET_DATA) {
@@ -25,8 +23,7 @@ chrome.runtime.onMessage.addListener(
             let stream_Id = request.data;
             chrome.storage.local.get(
                 {
-                    [PREFIX.STORE + stream_Id]: {},
-                    [PREFIX.TMP + stream_Id]: {}
+                    [stream_Id]: {}
                 },
                 function (items) {
                     if (Object.keys(items).length == 0) {
@@ -37,8 +34,7 @@ chrome.runtime.onMessage.addListener(
                         sender.tab.id,
                         {
                             type: MESSAGE_TYPES.GET_DATA,
-                            store: items[PREFIX.STORE + stream_Id],
-                            tmp: items[PREFIX.TMP + stream_Id]
+                            savedata: items[stream_Id]
                         }
                     );
                 }

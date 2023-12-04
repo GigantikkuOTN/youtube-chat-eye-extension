@@ -16,6 +16,7 @@
     --msg-item-text-color: #cfcfcf;
     --msg-item-text-mod-color: #0099ff;
     --msg-item-text-owner-color: #d0ff00;
+    --important-msg-bg-color: #4d0000;
     --popup-width: 500px;
     --font-size: 14px;
     --font-size-list: 13.3px;
@@ -132,4 +133,12 @@ body[popup] {
 
 .messages__semi {
     color: var(--title-text-color);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.important {
+    background: var(--important-msg-bg-color) !important;
 }

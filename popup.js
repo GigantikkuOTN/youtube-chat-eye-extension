@@ -1,28 +1,8 @@
 import * as common from './js/commons.js';
 
-function loadLists() {
-    common.clearListItems();
-    chrome.storage.local.get(
-        null,
-        function (items) {
-            let keys = Object.keys(items);
-            for(let i = 0; i < keys.length; i++) {
-                if (!keys[i].startsWith(common.PREFIX.STORE)) {
-                    continue;
-                }
-
-                //добавляем только те списки, где сохранены сообщения
-                if (Object.keys(items[keys[i]]).length != 0) {
-                    common.addListItem(keys[i].slice(common.PREFIX.STORE.length));//.slice(PREFIX.STORE.length)
-                }
-            }
-        }
-    );
-}
-
 function reLoadStoredData() {
 	common.clearItems();
-    loadLists();
+    common.loadLists();
     chrome.storage.local.get(
         {
             lastList: common.DEFAULT_LIST_NAME
@@ -32,7 +12,7 @@ function reLoadStoredData() {
                 return;
             }
 
-            common.loadListData(item.lastList);
+            common.loadListData(true, null, item.lastList);
         }
     );
 }
@@ -47,11 +27,8 @@ function setLastList(name) {
 
 function listSelected(event) {
     let listName = event.target.options[event.target.selectedIndex].text;
-    if (listName != common.DEFAULT_LIST_NAME) {
-        listName = common.PREFIX.STORE + listName;
-    }
     setLastList(listName);
-    common.loadListData(listName);
+    common.loadListData(true, null, listName);
 }
 
 function openMainPage(event) {

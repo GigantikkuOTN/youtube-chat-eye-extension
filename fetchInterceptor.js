@@ -7,17 +7,16 @@ const EVENT_TYPES_YCE = {
     SAVE_DATA_TO_CONTENT: "YCE_SAVE_DATA_TO_CONTENT",
     SAVE_DATA_INTERCEPTOR: "YCE_SAVE_DATA_INTERCEPTOR"
 };
-const PREFIX_YCE = { STORE: "STORE_", TMP: "TMP_" };
 let dataRequested_YCE = false;
 let saveStarted_YCE = false;
 let currentStreamId_YCE = "";
-let saveData_YCE = {};
-let tmpData_YCE = {};
+let data_YCE = {};
 /*
-stored/temp data format:
+data format:
 {
     messageId_1: {
         date: 6516516165165161,
+        important: true,
         username: "",
         message: "",
         isModerator: false,
@@ -56,7 +55,7 @@ window.fetch = function() {
                 if (response) {
                     response.clone().json()
                     .then( (json) => {
-                        processJson(json);
+                        YCE_processJson(json);
                         resolve(response);
                     })
                     .catch((error) => {
@@ -79,18 +78,17 @@ window.fetch = function() {
 window.addEventListener(
     EVENT_TYPES_YCE.GET_DATA_TO_INTERCEPTOR,
     function(event) {
-        addRequestedData(saveData_YCE, event.detail.store);
-        addRequestedData(tmpData_YCE, event.detail.tmp);
+        YCE_addRequestedData(event.detail.savedata);
     },
     false
 );
 
-function addRequestedData(data, newData) {
+function YCE_addRequestedData(newData) {
     let msgIds = Object.keys(newData);
     for (let i = 0; i < msgIds.length; i++) {
         let msgId = msgIds[i];
-        if (!data.hasOwnProperty(msgId)) {
-            data[msgId] = newData[msgId];
+        if (!data_YCE.hasOwnProperty(msgId)) {
+            data_YCE[msgId] = newData[msgId];
         }
         YCE_addAuthor(
             newData[msgId].channelId,
@@ -103,38 +101,37 @@ function addRequestedData(data, newData) {
     }
 }
 
-function requestData(streamId) {
+function YCE_requestData(streamId) {
     YCE_sendMessage(
         EVENT_TYPES_YCE.GET_DATA_TO_CONTENT, 
         streamId
     );
 }
 
-function saveData(streamId) {
+function YCE_saveData(streamId) {
     YCE_sendMessage(
         EVENT_TYPES_YCE.SAVE_DATA_TO_CONTENT, 
         {
             stream_Id: streamId,
-            store: saveData_YCE,
-            tmp: tmpData_YCE
+            savedata: data_YCE
         }
     );
-    setTimeout(saveData, 30000, streamId);
+    setTimeout(YCE_saveData, 30000, streamId);
 }
 
-function processJson(json) {
-    if (YCE_hasContinuation(json) && !hasStreamId()) {
+function YCE_processJson(json) {
+    if (YCE_hasContinuation(json) && !YCE_hasStreamId()) {
         currentStreamId_YCE = YCE_findStreamId(json.continuationContents.liveChatContinuation.continuations);
     }
 
-    if (YCE_hasContinuation(json) && !dataRequested_YCE && hasStreamId()) {
-        requestData(currentStreamId_YCE);
+    if (YCE_hasContinuation(json) && !dataRequested_YCE && YCE_hasStreamId()) {
+        YCE_requestData(currentStreamId_YCE);
         dataRequested_YCE = true;
     }
 
-    if (!saveStarted_YCE && hasStreamId()) {
+    if (!saveStarted_YCE && YCE_hasStreamId()) {
         setTimeout(
-            saveData,
+            YCE_saveData,
             30000,
             currentStreamId_YCE
         );
@@ -159,6 +156,7 @@ function processJson(json) {
             let msgNode = actionNode.addChatItemAction.item.liveChatTextMessageRenderer;
             let messageItem = {
                 date: Date.now(),
+                important: false,
                 channelId: msgNode.authorExternalChannelId,
                 isModerator: false,
                 isOwner: false,
@@ -175,14 +173,14 @@ function processJson(json) {
                 }
             }
 
-            YCE_actionAdd(tmpData_YCE, msgNode.id, messageItem);
+            YCE_actionAdd(msgNode.id, messageItem);
         } else if (actionNode.hasOwnProperty('removeChatItemByAuthorAction')) {
             YCE_actionMuteBan(actionNode.removeChatItemByAuthorAction.externalChannelId);
         }
     }
 }
 
-function hasStreamId() {
+function YCE_hasStreamId() {
     return currentStreamId_YCE.length != 0;
 }
 
@@ -282,13 +280,13 @@ function YCE_getAuthor(channelId) {
     }
 }
 
-function YCE_actionAdd(data, messageId, messageItem) {
-    if (data.hasOwnProperty(messageId)) {
+function YCE_actionAdd(messageId, messageItem) {
+    if (data_YCE.hasOwnProperty(messageId)) {
         return;
     }
 
     console.log('[YCE_actionAdd] Adding message: ' + JSON.stringify(messageItem));
-    data[messageId] = messageItem;
+    data_YCE[messageId] = messageItem;
     YCE_addAuthor(
         messageItem.channelId,
         {
@@ -303,20 +301,23 @@ function YCE_actionRemove(messageId) {
     //найти сообщение
     // если нашлось, то все сохранить в savedData
     // если не нашлось, то скипнуть?
-    if (!tmpData_YCE.hasOwnProperty(messageId)) {
+    if (!data_YCE.hasOwnProperty(messageId)) {
         return;
     }
 
-    let msg = tmpData_YCE[messageId];
+    let msg = data_YCE[messageId];
     console.log('[YCE_actionRemove] Adding message to storedata: ' + JSON.stringify(msg));
-    YCE_actionAdd(saveData_YCE, messageId, msg);
-    YCE_sendMessage(
-        EVENT_TYPES_YCE.NOTIFICATION, 
-        {
-            titleText: "The message has been deleted",
-            messageText: msg.username + (msg.isModerator ? " [M]":"")+ (msg.isOwner ? " [O]":"")+ ': ' + msg.message
-        }
-    );
+
+    if (!msg.important) {
+        msg.important = true;
+        YCE_sendMessage(
+            EVENT_TYPES_YCE.NOTIFICATION, 
+            {
+                titleText: "The message has been deleted",
+                messageText: msg.username + (msg.isModerator ? " [M]":"")+ (msg.isOwner ? " [O]":"")+ ': ' + msg.message
+            }
+        );
+    }   
 }
 
 function YCE_actionMuteBan(channelId) {
@@ -329,6 +330,7 @@ function YCE_actionMuteBan(channelId) {
     let messageId = mutedBannedId_YCE + Date.now();
     var messageItem = {};
     messageItem["date"] = Date.now();
+    messageItem["important"] = true;
     messageItem["channelId"] = channelId;
     messageItem["isModerator"] = foundedUser.isModerator;
     messageItem["isOwner"] = foundedUser.isOwner;
@@ -336,8 +338,7 @@ function YCE_actionMuteBan(channelId) {
     messageItem["username"] = foundedUser.username;
 
     console.log('[YCE_actionMuteBan] Muted or Banned user: ' + JSON.stringify(messageItem));
-    YCE_actionAdd(saveData_YCE, messageId, messageItem);
-    YCE_actionAdd(tmpData_YCE, messageId, messageItem);
+    YCE_actionAdd(messageId, messageItem);
     YCE_sendMessage(
         EVENT_TYPES_YCE.NOTIFICATION, 
         {
