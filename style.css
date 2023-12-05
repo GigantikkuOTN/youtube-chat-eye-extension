@@ -62,7 +62,7 @@ body[popup] {
     color: var(--button-text-hover-color);
 }
 
-#streamLists {
+#streamsList {
     flex: 1;
 }
 

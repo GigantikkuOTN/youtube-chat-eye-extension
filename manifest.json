@@ -1,6 +1,6 @@
 {
     "name": "Youtube Chat Eye",
-    "version": "1.7.5",
+    "version": "1.7.6",
     "author": "OTN",
     "description": "Catch deleted messages",
     "manifest_version": 3,
@@ -11,7 +11,7 @@
         "16": "/icons/icon_16.png"
     },
     "action":{
-        "default_popup": "popup.html",
+        "default_popup": "main.html?popup=true",
         "default_title": "Youtube Chat Eye"
     },
     "background": {
