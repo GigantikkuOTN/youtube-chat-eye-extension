@@ -15,7 +15,7 @@ function addMessageItem(msgItem) {
     if (isPopup) {
         blockElement.setAttribute("class", "messages__item");
     } else {
-        if (msgItem.important) {
+        if (msgItem.important && !isOnlyImportant()) {
             blockElement.setAttribute("class", "messages__item important");
         } else {
             blockElement.setAttribute("class", "messages__item");
