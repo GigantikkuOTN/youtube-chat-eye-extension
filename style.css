@@ -142,3 +142,17 @@ body[popup] {
 .important {
     background: var(--important-msg-bg-color) !important;
 }
+
+.settings_item {
+    padding: 3px;
+    color: var(--msg-item-author-text-color);
+    font-weight: bold;
+}
+
+.settings_item:nth-child(odd) {
+    background: var(--msg-item-bg-odd-color);
+}
+
+.settings_item:nth-child(even) {
+    background: var(--msg-item-bg-even-color);
+}

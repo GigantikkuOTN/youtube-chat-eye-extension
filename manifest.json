@@ -15,7 +15,7 @@
         "default_title": "Youtube Chat Eye"
     },
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "/js/background.js"
     },
     "content_scripts": [
         {
@@ -24,7 +24,7 @@
             ],
             "run_at": "document_start",
             "js": [
-                "content_iframe.js"
+                "/js/content_iframe.js"
             ],
             "all_frames" : true
         }
@@ -36,7 +36,7 @@
     ],
     "web_accessible_resources": [
         {
-            "resources": ["fetchInterceptor.js"],
+            "resources": ["/js/fetchInterceptor.js"],
             "matches": ["*://www.youtube.com/*"]
         }
     ],
