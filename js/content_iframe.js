@@ -9,7 +9,7 @@ const EVENT_TYPES_YCE = {
 const MESSAGE_TYPES = { NOTIFICATION:0, SETTINGS_CHANGED: 1, SAVE_DATA: 2, GET_DATA: 3, CLEAR: 4 };
 
 let s = document.createElement('script');
-s.src = chrome.runtime.getURL('fetchInterceptor.js');
+s.src = chrome.runtime.getURL('/js/fetchInterceptor.js');
 s.onload = function() {
     this.remove();
 };
