@@ -50,7 +50,7 @@ function showNotification(titleText, messageText) {
     chrome.notifications.create(
         {
             type: "basic",
-            iconUrl: "./icons/icon_48.png",
+            iconUrl: "../icons/icon_48.png",
             title: titleText,
             message: messageText
         }
