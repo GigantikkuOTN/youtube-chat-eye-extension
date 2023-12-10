@@ -88,7 +88,22 @@ function addAuthorsItems(authors) {
     }
     for (let i = 0; i < authors.length; i++) {
         let option = document.createElement("option");
-        option.text = authors[i];
+        let text = '';
+        let author = authors[i];
+        if (author.isModerator) {
+            text = '[M]';
+        }
+        if (author.isOwner) {
+            text = text + '[O]';
+        }
+
+        if (text === '') {
+            option.text = author.username.trim();
+        } else {
+            option.text = text + ' ' + author.username.trim();
+        }
+        
+        option.setAttribute('value', author.username);
         authorsLists.appendChild(option);
     }
 }
@@ -154,6 +169,32 @@ function sortByDate(x, y) {
         return -1;
     }
     return 0;
+}
+
+function containsAuthor(authors, author) {
+    let i = authors.length;
+    while(i--) {
+        if (authors[i].username === author) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function sortByAuthor(x, y) {
+    if ((x.isModerator && y.isModerator) | (x.isOwner && y.isOwner)) {
+        return x.username.localeCompare(y.username);
+    }
+
+    if (x.isModerator | x.isOwner) {
+        return -1;
+    }
+
+    if (y.isModerator | y.isOwner) {
+        return 1;
+    }
+
+    return x.username.localeCompare(y.username);
 }
 
 function getUrlParameterValue(parameter) {
@@ -292,8 +333,13 @@ function loadData(streamId, onlyImportant, author) {
     let authors = [];
     for (let i = 0; i < msgIds.length; i++) {
         let msgItem = data[streamId][msgIds[i]];
-        if (!authors.includes(msgItem.username)) {
-            authors.push(msgItem.username);
+        if (!containsAuthor(authors, msgItem.username)) {
+            //authors.push(msgItem.username);
+            authors.push({
+                username: msgItem.username,
+                isModerator: msgItem.isModerator,
+                isOwner: msgItem.isOwner
+            });
         }
 
         if (onlyImportant && !msgItem.important) {
@@ -307,7 +353,7 @@ function loadData(streamId, onlyImportant, author) {
         messages.push(msgItem);
     }
 
-    authors.sort();
+    authors.sort(sortByAuthor);
     addAuthorsItems(authors);
 
     messages.sort(sortByDate);
@@ -319,7 +365,7 @@ function loadData(streamId, onlyImportant, author) {
     if (author != null) {
         let authorsListElement = document.getElementById('authorsList');
         for (let i = 0; i < authorsListElement.options.length; i++) {
-        if (authorsListElement.options[i].text == author) {
+        if (authorsListElement.options[i].value == author) {
             authorsListElement.options[i].selected = true;
             break;
         }
