@@ -2,7 +2,8 @@ const MESSAGE_TYPES = {NOTIFICATION:0, SETTINGS_CHANGED: 1, SAVE_DATA: 2, GET_DA
 function save() {
     chrome.storage.local.set(
         {
-            notifications: document.getElementById("notifications").checked
+            notifications: document.getElementById("notifications").checked,
+            authorAsLink: document.getElementById("authorsLink").checked
         },
         function () {
             console.log('Settings saved');
@@ -18,10 +19,12 @@ function save() {
 function load() {
     chrome.storage.local.get(
         {
-            notifications: false
+            notifications: false,
+            authorAsLink: false
         },
         function (items) {
             document.getElementById("notifications").checked = items.notifications;
+            document.getElementById("authorsLink").checked = items.authorAsLink;
             console.log('Settings loaded');
         }
     );

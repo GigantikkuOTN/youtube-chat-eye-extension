@@ -108,16 +108,17 @@ body[popup] {
     vertical-align: middle;
 }
 
-.messages__author {
+.messages__author, .messages__author > a {
     color: var(--msg-item-author-text-color);
     font-weight: bold;
+    text-decoration: none;
 }
 
-.messages__author[mod] {
+.messages__author[mod], .messages__author[mod] > a {
     color: var(--msg-item-text-mod-color);
 }
 
-.messages__author[owner] {
+.messages__author[owner], .messages__author[owner] > a {
     color: var(--msg-item-text-owner-color);
 }
 

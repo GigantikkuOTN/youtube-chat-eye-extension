@@ -1,11 +1,13 @@
 const DEFAULT_LIST_NAME = "---Выбрать---";
 const DEFAULT_AUTHORS_NAME = "---Авторы---";
 const LAST_LIST_PROPERTY = "lastList";
-const IGNORE = ["notifications", LAST_LIST_PROPERTY];
+const IGNORE = ["notifications", LAST_LIST_PROPERTY, "authorAsLink"];
+const CHANNEL_LINK = "https://www.youtube.com/channel/";
 const MESSAGE_TYPES = { NOTIFICATION:0, SETTINGS_CHANGED: 1, SAVE_DATA: 2, GET_DATA: 3, CLEAR: 4 };
 let data = {};
 
 let isPopup = false;
+let authorsWithLink = false;
 
 //список сообщений
 function addMessageItem(msgItem) {
@@ -24,8 +26,32 @@ function addMessageItem(msgItem) {
     
 	let authorElement = document.createElement("span");
 	authorElement.setAttribute("class", "messages__author");
-    authorElement.innerText = msgItem.username;
+    let authorText = msgItem.username;
     if (msgItem.isOwner) {
+        authorText += " [O]";
+
+        //authorElement.innerText += " [O]";
+        authorElement.setAttribute("owner", "");
+    }
+    if (msgItem.isModerator) {
+        authorText += " [M]";
+
+        //authorElement.innerText += " [M]";
+        if (!msgItem.isOwner) {
+            authorElement.setAttribute("mod", "");
+        }
+    }
+
+    if (authorsWithLink) {
+        let linkElement = document.createElement("a");
+        linkElement.setAttribute("href", CHANNEL_LINK + msgItem.channelId);
+        linkElement.innerText = authorText;
+        authorElement.appendChild(linkElement);
+    } else {
+        authorElement.innerText = authorText;
+    }
+    //authorElement.innerText = msgItem.username;
+    /*if (msgItem.isOwner) {
         authorElement.innerText += " [O]";
         authorElement.setAttribute("owner", "");
     }
@@ -34,7 +60,7 @@ function addMessageItem(msgItem) {
         if (!msgItem.isOwner) {
             authorElement.setAttribute("mod", "");
         }
-    }
+    }*/
     
 	blockElement.appendChild(authorElement);
 
@@ -458,4 +484,12 @@ document.getElementById('onlyImportant').addEventListener('click', updateView);
 document.getElementById('streamsList').onchange = updateView;
 document.getElementById('authorsList').onchange = updateView;
 
-reLoadStoredData();
+chrome.storage.local.get(
+    {
+        authorAsLink: false
+    },
+    function (items) {
+        authorsWithLink = items.authorAsLink;
+        reLoadStoredData();
+    }
+);

@@ -71,13 +71,15 @@ function readSettings() {
 function clearAll() {
     chrome.storage.local.get(
         {
-            notifications: false
+            notifications: false,
+            authorAsLink: false
         },
         function (items) {
             chrome.storage.local.clear().then(
                 chrome.storage.local.set(
                     {
-                        notifications: items.notifications
+                        notifications: items.notifications,
+                        authorAsLink: items.authorAsLink
                     }
                 )
             );
