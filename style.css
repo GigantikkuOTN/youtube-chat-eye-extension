@@ -67,7 +67,7 @@ body[popup] {
 }
 
 .messages__item {
-    padding: 3px;
+    padding: 5px;
 }
 
 .messages__item:nth-child(odd) {
