@@ -1,0 +1,4 @@
+body {
+    width: var(--popup-width);
+    margin: 5px;
+}

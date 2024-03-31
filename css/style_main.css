@@ -1,0 +1,42 @@
+body {
+    margin: 0px;
+}
+
+.buttons {
+    flex: 1;
+    height: var(--buttons-container-height);
+}
+
+.messages {
+    max-height: calc(100vh - var(--title-height) - 2 * var(--padding));
+}
+
+.title {
+    height: var(--title-height);
+}
+
+.authorsLabel {
+    font-size: var(--font-size);
+    color: var(--title-text-color);
+    padding: var(--padding);
+    margin: 0px;
+    align-content: center;
+    height: var(--buttons-container-height);
+}
+
+.messages__author.big, .messages__author.big > a {
+    font-size: var(--font-size);
+    margin: 5px;
+}
+
+#authorsList {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
+    align-content: flex-start;
+    height: calc(100vh - var(--title-height) - 2 * var(--buttons-container-height) - 6 * var(--padding));
+    overflow-y: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+}

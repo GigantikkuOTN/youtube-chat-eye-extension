@@ -261,7 +261,7 @@ function YCE_findStreamId(continuations) {
 }
 
 function YCE_getStreamIdFromTopic(topic) {
-    let m = topic.match(/~([^~]+)~/);
+    let m = topic.match(/chat~([^~]+)/);
     return m == null ? topic : m[1];
 }
 
@@ -298,9 +298,6 @@ function YCE_actionAdd(messageId, messageItem) {
 }
 
 function YCE_actionRemove(messageId) {
-    //найти сообщение
-    // если нашлось, то все сохранить в savedData
-    // если не нашлось, то скипнуть?
     if (!data_YCE.hasOwnProperty(messageId)) {
         return;
     }
@@ -321,7 +318,6 @@ function YCE_actionRemove(messageId) {
 }
 
 function YCE_actionMuteBan(channelId) {
-    //если не нашлось такого юзера, то скрипаем
     var foundedUser = YCE_getAuthor(channelId);
     if (foundedUser == null) {
         return;

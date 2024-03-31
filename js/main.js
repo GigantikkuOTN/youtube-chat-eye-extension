@@ -1,488 +1,182 @@
-const DEFAULT_LIST_NAME = "---Выбрать---";
-const DEFAULT_AUTHORS_NAME = "---Авторы---";
-const LAST_LIST_PROPERTY = "lastList";
-const IGNORE = ["notifications", LAST_LIST_PROPERTY, "authorAsLink"];
-const CHANNEL_LINK = "https://www.youtube.com/channel/";
-const MESSAGE_TYPES = { NOTIFICATION:0, SETTINGS_CHANGED: 1, SAVE_DATA: 2, GET_DATA: 3, CLEAR: 4 };
-let data = {};
+import * as common from './common.js';
 
-let isPopup = false;
+let data = {};
 let authorsWithLink = false;
 
-//список сообщений
-function addMessageItem(msgItem) {
-	let content = document.getElementById('content');
-
-	let blockElement = document.createElement("div");
-    if (isPopup) {
-        blockElement.setAttribute("class", "messages__item");
-    } else {
-        if (msgItem.important && !isOnlyImportant()) {
-            blockElement.setAttribute("class", "messages__item important");
-        } else {
-            blockElement.setAttribute("class", "messages__item");
-        }
-    }
-    
-	let authorElement = document.createElement("span");
-	authorElement.setAttribute("class", "messages__author");
-    let authorText = msgItem.username;
-    if (msgItem.isOwner) {
-        authorText += " [O]";
-
-        //authorElement.innerText += " [O]";
-        authorElement.setAttribute("owner", "");
-    }
-    if (msgItem.isModerator) {
-        authorText += " [M]";
-
-        //authorElement.innerText += " [M]";
-        if (!msgItem.isOwner) {
-            authorElement.setAttribute("mod", "");
-        }
-    }
-
-    if (authorsWithLink) {
-        let linkElement = document.createElement("a");
-        linkElement.setAttribute("href", CHANNEL_LINK + msgItem.channelId);
-        linkElement.innerText = authorText;
-        authorElement.appendChild(linkElement);
-    } else {
-        authorElement.innerText = authorText;
-    }
-    //authorElement.innerText = msgItem.username;
-    /*if (msgItem.isOwner) {
-        authorElement.innerText += " [O]";
-        authorElement.setAttribute("owner", "");
-    }
-    if (msgItem.isModerator) {
-        authorElement.innerText += " [M]";
-        if (!msgItem.isOwner) {
-            authorElement.setAttribute("mod", "");
-        }
-    }*/
-    
-	blockElement.appendChild(authorElement);
-
-	let semiElement = document.createElement("span");
-	semiElement.setAttribute("class", "messages__semi");
-	semiElement.innerText = ": ";
-	blockElement.appendChild(semiElement);
-
-	let messageElement = document.createElement("span");
-	messageElement.setAttribute("class", "messages__message-text");
-	messageElement.innerText = msgItem.message;
-	blockElement.appendChild(messageElement);
-
-	content.appendChild(blockElement);
-}
-
-function clearMessageItems() {
-	let content = document.getElementById('content');
-	while (content.firstChild) {
-		content.removeChild(content.lastChild);
-	}
-}
-//==
-
-//список стримов
-function addStreamItems(items) {
-    let lists = document.getElementById('streamsList');
-    if (lists == null) {
-        return
-    }
-    for (let i = 0; i < items.length; i++) {
-        let option = document.createElement("option");
-        option.text = items[i];
-        lists.appendChild(option);
-    }
-}
-
-function clearStreamsItems() {
-    let lists = document.getElementById('streamsList');
-    for (let i = lists.options.length - 1; i > 0; i--) {
-        lists.options.remove(i);
-    }
-}
-//==
-
-//список авторов
-function addAuthorsItems(authors) {
+function addAuthorItems(authors) {
     let authorsLists = document.getElementById('authorsList');
     if (authorsLists == null) {
         return
     }
-    for (let i = 0; i < authors.length; i++) {
-        let option = document.createElement("option");
-        let text = '';
+
+    for(let i = 0; i < authors.length; i++) {
         let author = authors[i];
+        let label = document.createElement('label');
+        label.classList.add('messages__author');
+        label.classList.add('big');
+        let input = document.createElement('input');
+        input.setAttribute('type', 'checkbox');
+        label.appendChild(input);
+
+        let text = '';
+
         if (author.isModerator) {
             text = '[M]';
+            if (!author.isOwner) {
+                label.setAttribute(common.MODERATOR, "");
+            }
         }
         if (author.isOwner) {
             text = text + '[O]';
+            label.setAttribute(common.OWNER, "");
         }
 
         if (text === '') {
-            option.text = author.username.trim();
+            text = author.username.trim();
         } else {
-            option.text = text + ' ' + author.username.trim();
+            text = text + ' ' + author.username.trim();
         }
-        
-        option.setAttribute('value', author.username);
-        authorsLists.appendChild(option);
+
+        if (authorsWithLink) {
+            let href = document.createElement('a');
+            href.setAttribute('href', common.getChannelUrl(author.channelId));
+            href.innerText = text;
+
+            label.appendChild(href);
+        } else {
+            label.appendChild(document.createTextNode(text));
+        }
+
+        input.setAttribute('data', author.username);
+        authorsLists.appendChild(label);
     }
 }
 
 function clearAuthorsItems() {
-    let lists = document.getElementById('authorsList');
-    for (let i = lists.options.length - 1; i > 0; i--) {
-        lists.options.remove(i);
-    }
-}
-//==
-
-//export
-function exportQ() {
-    let onlyCurrent = confirm('Экспортировать только текущий список или все? (ОК - текущий)');
-    if (onlyCurrent) {
-        let listName = getSelectedStream();
-        if (listName == DEFAULT_LIST_NAME) {
-            return;
-        }
-        exportList(listName);
-    } else {
-        exportAll();
-    }
-}
-
-function exportList(listname) {
-	let content = "";
-    let itemKeys = Object.keys(data);
-    for(let i = 0; i < itemKeys.length; i++) {
-        let streamList = itemKeys[i];
-        if (listname != null && !streamList.endsWith(listname)) {
-            continue;
-        }
-                
-        content += messagesToString(streamList, data[streamList]);
+    let authorsLists = document.getElementById('authorsList');
+    if (authorsLists == null) {
+        return
     }
 
-    download(content, "deleted_messages__" + listname + ".txt", "text/plain");
+	while (authorsLists.firstChild) {
+		authorsLists.removeChild(authorsLists.lastChild);
+	}
 }
 
-function exportAll() {
-	let content = "";
-    let itemKeys = Object.keys(data);
-    for(let i = 0; i < itemKeys.length; i++) {
-        if (isIgnored(itemKeys[i])) {
-            continue;
-        }
-        let streamList = itemKeys[i];
+function loadData(streamId, clearLoad) {
+    let selectedAuthors = [];
+    if (!clearLoad) {
+        selectedAuthors = getSelectedAuthors();
+    }
+    
+    clearAuthorsItems();
+    common.clearMessageItems();
+    if (streamId == common.DEFAULT_LIST_NAME || !data.hasOwnProperty(streamId)) {
+        return;
+    }
+    let onlyImportant = clearLoad ? false:isOnlyImportant();
 
-        content += messagesToString(streamList, data[streamList]);
+    let filteredData = common.filterData(
+        data[streamId], 
+        selectedAuthors, 
+        onlyImportant);
+
+    for (let i = 0; i < filteredData.messages.length; i++) {
+        common.addMessageItem(filteredData.messages[i], false, onlyImportant);
     }
 
-    download(content, "deleted_messages_all.txt", "text/plain");
-}
-//==
+    addAuthorItems(filteredData.authors);
 
-//other
-function sortByDate(x, y) {
-    if (x.date > y.date) {
-        return 1;
-    } else if (x.date < y.date) {
-        return -1;
-    }
-    return 0;
-}
-
-function containsAuthor(authors, author) {
-    let i = authors.length;
-    while(i--) {
-        if (authors[i].username === author) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function sortByAuthor(x, y) {
-    if ((x.isModerator && y.isModerator) | (x.isOwner && y.isOwner)) {
-        return x.username.localeCompare(y.username);
+    for (let i = 0; i < selectedAuthors.length; i++) {
+        let input = document.querySelector('#authorsList input[data="' + selectedAuthors[i] + '"]')
+        input.checked = true;
     }
 
-    if (x.isModerator | x.isOwner) {
-        return -1;
+    let inputs = document.querySelectorAll('#authorsList input');
+    for(let i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener('change', updateView);
     }
-
-    if (y.isModerator | y.isOwner) {
-        return 1;
-    }
-
-    return x.username.localeCompare(y.username);
+    
+    common.selectStreamList(streamId);
+    common.scrollMessagesToBottom();
 }
 
-function getUrlParameterValue(parameter) {
-    let paramsUrl = document.location.search.substring(1);
-    let params = paramsUrl.split('&');
-    for (let i = 0; i < params.length; i++) {
-        let param = params[i].split('=');
-        if (param[0] == parameter) {
-            return param[1];
-        }
-    }
-}
 
-function openMainPage(event) {
-    chrome.tabs.create(
-        {
-            active: true,
-            url:  'main.html'
-        },
-        null
-    );
-}
-
-function setLastList(name) {
-    chrome.storage.local.set(
-        {
-            lastList: name
-        }
-    );
-}
-
-function isIgnored(text) {
-    return IGNORE.includes(text);
-}
 
 function isOnlyImportant() {
     return document.getElementById('onlyImportant').checked;
 }
 
-function getSelectedAuthor() {
-    let authors = document.getElementById('authorsList');
-    return authors.options[authors.options.selectedIndex].value;
-}
-
-function getSelectedStream() {
-    let streamLists = document.getElementById('streamsList');
-    return streamLists.options[streamLists.options.selectedIndex].value;
-}
-
-function clearAll() {
-    let needClear = confirm('Очистить все данные?');
-    if (needClear) {
-        chrome.runtime.sendMessage(
-            {
-                type: MESSAGE_TYPES.CLEAR
-            }
-        );
-        clearMessageItems();
-        clearStreamsItems();
-        clearAuthorsItems();
-    }
-}
-
-function download(data, filename, type) {
-    let file = new Blob([data], {type: type});
-    if (window.navigator.msSaveOrOpenBlob) {// IE10+
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    } else { // Others
-        let a = document.createElement("a"),
-            url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        }, 0);
-    }
-}
-
-function messagesToString(streamList, msgs) {
-    let content = getUrlToStream(streamList) + "\n";
-    let msgIds = Object.keys(msgs);
-    let messages = [];
-    for(let j = 0; j < msgIds.length; j++) {
-        messages.push(msgs[msgIds[j]]);
-    }
-
-    messages.sort(sortByDate);
-
-    for(let j = 0; j < messages.length; j++) {
-        let msg = messages[j];
-        content += "    " 
-            + msg.username
-            + (msg.isModerator ? " [M]":"") 
-            + (msg.isOwner ? " [O]":"") 
-            + ": " + msg.message + "\n";
-    }
-    content += "\n";
-    return content;
-}
-
-function getUrlToStream(streamId) {
-    return 'https://www.youtube.com/watch?v=' + streamId;
-}
-//==
-
-function loadStreamList() {
-    clearStreamsItems();
-
-    let keys = Object.keys(data);
-    let lists = [];
-    for(let i = 0; i < keys.length; i++) {
-        if (isIgnored(keys[i])) {
-            continue;
+function getSelectedAuthors() {
+    let selectedAuthors = [];
+    let sel = document.querySelectorAll('#authorsList .messages__author input');
+    for (let i = 0; i < sel.length; i++) {
+        let input = sel[i];
+        if (input.checked) {
+            selectedAuthors.push(input.attributes['data'].value);
         }
-        //добавляем только те списки, где сохранены сообщения
-        /*if (Object.keys(data[keys[i]]).length != 0) {
-            lists.push(keys[i]);
-        }*/
-        lists.push(keys[i]);
     }
-    addStreamItems(lists);
+    return selectedAuthors;
 }
 
-function loadData(streamId, onlyImportant, author) {
+function removeAuthorsSelection() {
     clearAuthorsItems();
-    clearMessageItems();
-    if (streamId == DEFAULT_LIST_NAME || !data.hasOwnProperty(streamId)) {
-        return;
-    }
-
-    let msgIds = Object.keys(data[streamId]);
-    let messages = [];
-    let authors = [];
-    for (let i = 0; i < msgIds.length; i++) {
-        let msgItem = data[streamId][msgIds[i]];
-        if (!containsAuthor(authors, msgItem.username)) {
-            //authors.push(msgItem.username);
-            authors.push({
-                username: msgItem.username,
-                isModerator: msgItem.isModerator,
-                isOwner: msgItem.isOwner
-            });
-        }
-
-        if (onlyImportant && !msgItem.important) {
-            continue;
-        }
-
-        if (author != null && author != DEFAULT_AUTHORS_NAME && msgItem.username != author) {
-            continue;
-        }
-
-        messages.push(msgItem);
-    }
-
-    authors.sort(sortByAuthor);
-    addAuthorsItems(authors);
-
-    messages.sort(sortByDate);
-    for (let i = 0; i < messages.length; i++) {
-        addMessageItem(messages[i]);
-    }
-
-    //отметим выбранного автора
-    if (author != null) {
-        let authorsListElement = document.getElementById('authorsList');
-        for (let i = 0; i < authorsListElement.options.length; i++) {
-        if (authorsListElement.options[i].value == author) {
-            authorsListElement.options[i].selected = true;
-            break;
-        }
-    }
-    }
-    
-    //отметим выбранный стрим
-    let listElement = document.getElementById('streamsList');
-    for (let i = 0; i < listElement.options.length; i++) {
-        if (listElement.options[i].text == streamId) {
-            listElement.options[i].selected = true;
-            break;
-        }
-    }
-    //проскроллить вниз
-    let content = document.getElementById('content');
-    content.scrollTop = content.scrollHeight;
+    updateView(null);
 }
+
 
 function reLoadStoredData() {
     chrome.storage.local.get(
         null,
         function (item) {
             data = item;
-            //todo
-            loadStreamList();
+            common.loadStreamList(data);
 
-            if (isPopup) {
-                showFilters(false);
-            } else {
-                showFilters(true);
-            }
-
-            if (data.hasOwnProperty(LAST_LIST_PROPERTY) && data[LAST_LIST_PROPERTY] != DEFAULT_LIST_NAME) {
-                loadData(data[LAST_LIST_PROPERTY], isPopup, null);
+            if (data.hasOwnProperty(common.LAST_LIST_PROPERTY) 
+            && data[common.LAST_LIST_PROPERTY] != common.DEFAULT_LIST_NAME) {
+                loadData(data[common.LAST_LIST_PROPERTY], false);
             }
         }
     );
 }
 
-function showFilters(show) {
-    let authorsList = document.getElementById('authorsList');
-    let impFilter = document.getElementById('importantContainer');
-    if (show) {
-        authorsList.classList.remove('hidden');
-        impFilter.classList.remove('hidden');
-    } else {
-        authorsList.classList.add('hidden');
-        impFilter.classList.add('hidden');
+function clearAll() {
+    if (common.clearAll()) {
+        clearAuthorsItems();
     }
-}
-
-function switchToPopupView() {
-    document.body.setAttribute('popup', '');
-    document.querySelector('.title__icon').src = './icons/icon_16.png';
-    document.querySelector('.title').removeAttribute('main');
-    document.querySelector('.buttons').removeAttribute('main');
-    document.getElementById('content').removeAttribute('main');
-    document.getElementById('openMain').classList.remove('hidden');
 }
 
 function updateView(event) {
-    let author = getSelectedAuthor();
-    let listName = getSelectedStream();
+    let listName = common.getSelectedStream();
 
-    if (isPopup) {
-        loadData(
-            listName,
-            true,
-            null);
-    } else {
-        loadData(
-            listName,
-            isOnlyImportant(),
-            author);
+    let isStreamListEvent = 
+        event != null 
+        && event.target.hasAttribute('id') 
+        && event.target.getAttribute('id') == "streamsList";
+    if (isStreamListEvent) {
+        document.getElementById('onlyImportant').checked = false;
     }
-    setLastList(listName);
+    loadData(listName, isStreamListEvent);
+    
+    common.setLastList(listName);
 }
 
-if (getUrlParameterValue('popup') === 'true') {
-    isPopup = true;
-    switchToPopupView();
+function openSettingsPage(event) {
+    common.openPage('pages/settings.html', true);
 }
 
-document.getElementById('openMain').addEventListener('click', openMainPage);
+document.addEventListener('DOMContentLoaded', ()=> {
+    document.querySelectorAll('[data-i18n]').forEach(common.translateElement);
+});
+
 document.getElementById('reload').addEventListener('click', reLoadStoredData);
 document.getElementById('clearAll').addEventListener('click', clearAll);
-document.getElementById('export').addEventListener('click', exportQ);
+document.getElementById('export').addEventListener('click', common.exportList);
+document.getElementById('exportAll').addEventListener('click', common.exportAll);
 document.getElementById('onlyImportant').addEventListener('click', updateView);
+document.getElementById('remSelect').addEventListener('click', removeAuthorsSelection);
+document.getElementById('openSettings').addEventListener('click', openSettingsPage);
 document.getElementById('streamsList').onchange = updateView;
-document.getElementById('authorsList').onchange = updateView;
 
 chrome.storage.local.get(
     {

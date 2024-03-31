@@ -1,0 +1,66 @@
+{
+  "title": {
+    "message": "Youtube Chat Eye - дополненный просмотр чата",
+    "description": "Extension title"
+  },
+  "reload": {
+    "message": "Обновить",
+    "description": "Текст кнопки Обновить"
+  },
+  "export": {
+    "message": "Экспорт",
+    "description": "Текст кнопки Экспорт"
+  },
+  "clr_all": {
+    "message": "Очистить всё",
+    "description": "Текст кнопки Очистить всё"
+  },
+  "only_important": {
+    "message": "Только важное ",
+    "description": "Текст чекбокса Только важное"
+  },
+  "export_all": {
+    "message": "Экспортировать всё",
+    "description": "Текст кнопки Экспортировать всё"
+  },
+  "msg_authors_label": {
+    "message": "Авторы сообщений:",
+    "description": "Заголовок блока с авторами"
+  },
+  "rm_selection": {
+    "message": "Снять выделение",
+    "description": "Текст кнопки Снять выделение"
+  },
+  "export_list_msg": {
+    "message": "Экспортировать список?",
+    "description": "Текст сообщения всплывающего окна при экспорте"
+  },
+  "export_all_msg": {
+    "message": "Экспортировать всё?",
+    "description": "Текст сообщения всплывающего окна при экспорте всего"
+  },
+  "clear_all_data_msg": {
+    "message": "Очистить все данные?",
+    "description": "Текст сообщения всплывающего окна при очистке"
+  },
+  "important": {
+    "message": "!!!ВАЖНО!!! ",
+    "description": "Пометка для удаленных сообщений, сообщений о бане/муте. Используется при экспорте"
+  },
+  "settings_title": {
+    "message": "Youtube Chat Eye - Настройки",
+    "description": "Заголовок страницы настроек"
+  },
+  "save": {
+    "message": "Сохранить",
+    "description": "Текст кнопки 'Сохранить'"
+  },
+  "important_notify": {
+    "message": "Уведомлять об удаленных сообщениях, банах/мутах",
+    "description": "Пункт настроек"
+  },
+  "nickname_as_link": {
+    "message": "Ник автора сообщения в виде ссылки",
+    "description": "Пункт настроек"
+  }
+}

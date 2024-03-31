@@ -26,12 +26,6 @@
 
 body {
     background: var(--bg-color);
-    margin: 0px;
-}
-
-body[popup] {
-    width: var(--popup-width);
-    margin: 5px;
 }
 
 .buttons {
@@ -39,10 +33,7 @@ body[popup] {
     padding: var(--padding);
     background: var(--buttons-bg-color);
     align-items: center;
-}
-
-.buttons[main] {
-    height: var(--buttons-container-height);
+    justify-content: center;
 }
 
 .customButton {
@@ -87,10 +78,6 @@ body[popup] {
     overflow-y: auto;
 }
 
-.messages[main] {
-    max-height: calc(100vh - var(--title-height) - var(--buttons-container-height) - 4 * var(--padding));
-}
-
 .title {
     font-size: var(--font-size);
     background: var(--title-bg-color);
@@ -98,10 +85,6 @@ body[popup] {
     padding: var(--padding);
     margin: 0px;
     font-weight: bold;
-}
-
-.title[main] {
-    height: var(--title-height);
 }
 
 .title__icon {
@@ -145,9 +128,13 @@ body[popup] {
 }
 
 .settings_item {
-    padding: 3px;
+    padding: 5px;
     color: var(--msg-item-author-text-color);
     font-weight: bold;
+}
+
+.settings_item.center {
+    text-align: center;
 }
 
 .settings_item:nth-child(odd) {
@@ -156,4 +143,15 @@ body[popup] {
 
 .settings_item:nth-child(even) {
     background: var(--msg-item-bg-even-color);
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.container__left, .container__right {
+    flex: 1;
 }

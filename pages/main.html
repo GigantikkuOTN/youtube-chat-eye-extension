@@ -1,0 +1,44 @@
+<html>
+<head>
+    <title data-i18n="title"></title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/style.css"></link>
+    <link rel="stylesheet" href="../css/style_main.css"></link>
+</head>
+<body>
+    <div class="title">
+        <center><img src="../icons/icon_32.png" class="title__icon" /> Youtube Chat Eye</center>
+    </div>
+    <div class="container">
+        <div class="container__left">
+            <div class="messages" id="content">
+                <!--<div class="messages__item">
+                    <span class="messages__author">Author</span><span class="messages__semi">: </span><span class="messages__message-text">Message</span>
+                </div>-->
+            </div>
+        </div>
+        <div class="container__right">
+            <div class="buttons">
+                <button class="customButton" id="reload" data-i18n="reload"></button>
+                <label class="customButton" id="importantContainer"><span data-i18n="only_important"></span><input type="checkbox" id="onlyImportant"></input></label>
+                <select class="customButton" id="streamsList">
+                    <option selected>-------</option>
+                </select>
+                <button class="customButton" id="export" data-i18n="export"></button>
+                <button class="customButton" id="exportAll" data-i18n="export_all"></button>
+                <button class="customButton" id="clearAll" data-i18n="clr_all"></button>
+                <button class="customButton" id="openSettings">⚙</button>
+            </div>
+            <div class="buttons">
+                <label class="authorsLabel" data-i18n="msg_authors_label"></label>
+                <button class="customButton" id="remSelect" data-i18n="rm_selection"></button>
+            </div>
+            <div id="authorsList">
+                <!--<label class="messages__author big"><input type="checkbox" data="666">автор</label>
+                <label class="messages__author big"><input type="checkbox" data="777" checked><a href="https://url">автор</a></label>-->
+            </div>
+        </div>
+    </div>
+    <script src="../js/main.js" type="module"></script>
+</body>
+</html> 

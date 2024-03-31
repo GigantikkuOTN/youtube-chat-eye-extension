@@ -1,9 +1,10 @@
 {
     "name": "Youtube Chat Eye",
-    "version": "1.7.7",
+    "version": "1.8",
     "author": "OTN",
-    "description": "Catch deleted messages",
+    "description": "Catch deleted messages, bans/mutes",
     "manifest_version": 3,
+    "default_locale": "en",
     "icons": {
         "128": "/icons/icon_128.png",
         "48": "/icons/icon_48.png",
@@ -11,7 +12,7 @@
         "16": "/icons/icon_16.png"
     },
     "action":{
-        "default_popup": "main.html?popup=true",
+        "default_popup": "pages/popup.html",
         "default_title": "Youtube Chat Eye"
     },
     "background": {
@@ -43,5 +44,5 @@
     "externally_connectable": {
         "matches": ["*://www.youtube.com/*"]
     },
-    "options_page": "settings.html"
+    "options_page": "pages/settings.html"
 } 

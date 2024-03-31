@@ -1,3 +1,5 @@
+import * as common from './common.js';
+
 const MESSAGE_TYPES = {NOTIFICATION:0, SETTINGS_CHANGED: 1, SAVE_DATA: 2, GET_DATA: 3, CLEAR: 4};
 function save() {
     chrome.storage.local.set(
@@ -30,5 +32,10 @@ function load() {
     );
 }
 
-document.addEventListener("DOMContentLoaded", load);
+document.addEventListener('DOMContentLoaded', ()=> {
+    document.querySelectorAll('[data-i18n]').forEach(common.translateElement);
+    load();
+    document.getElementById('about').innerText = 'v' + chrome.runtime.getManifest().version + ' | GigantikkuOTN';
+});
+
 document.getElementById('save').addEventListener("click", save);

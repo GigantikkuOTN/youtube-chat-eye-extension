@@ -1,0 +1,33 @@
+<html>
+<head>
+    <title data-i18n="settings_title"></title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/style.css"></link>
+</head>
+<body>
+    <div class="title" main>
+        <center><img src="../icons/icon_32.png" class="title__icon" /> <span data-i18n="settings_title"></span></center>
+    </div>
+	<div class="buttons" main>
+        <button class="customButton" id="save" data-i18n="save"></button>
+    </div>
+    <div class="content" main>
+        <div class="settings_item">
+            <label>
+                <input type="checkbox" id="notifications">
+                <span data-i18n="important_notify"></span>
+            </label>
+        </div>
+        <div class="settings_item">
+            <label>
+                <input type="checkbox" id="authorsLink">
+                <span data-i18n="nickname_as_link"></span>
+            </label>
+        </div>
+        <div class="settings_item center">
+            <label id="about"/>
+        </div>
+    </div>
+    <script src="../js/settings.js" type="module"></script>
+</body>
+</html> 
