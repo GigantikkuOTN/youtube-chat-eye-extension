@@ -5,7 +5,7 @@ Extension for Chrome and Chromium-based browsers
 
  * Notification when a message is deleted from a Youtube chat. It doesn’t matter who deleted it - the streamer, the moderator or the user himself
  * Notification if any user is banned/muted in the chat
- * Saving all messages in local storage with marks (deleted/ban/mut) and the ability to export
+ * Saving all messages in local storage with marks (deleted/ban/mute) and the ability to export
 
 **Notes**: 
 * *in the current version there is no way to accurately determine what exactly was applied to the user: ban or mute*
