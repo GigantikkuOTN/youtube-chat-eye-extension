@@ -186,10 +186,11 @@ function YCE_hasStreamId() {
 
 function YCE_isModerator(authorBadges) {
     for (let j = 0; j < authorBadges.length; j++) {
-        if (authorBadges[j].hasOwnProperty('liveChatAuthorBadgeRenderer')
-            && authorBadges[j].liveChatAuthorBadgeRenderer
-            && authorBadges[j].liveChatAuthorBadgeRenderer.hasOwnProperty('tooltip')) {
-                if (authorBadges[j].liveChatAuthorBadgeRenderer.tooltip == 'Модератор') {
+        let badge = authorBadges[j];
+        if (badge.hasOwnProperty('liveChatAuthorBadgeRenderer')
+            && badge.liveChatAuthorBadgeRenderer.hasOwnProperty('icon')
+            && badge.liveChatAuthorBadgeRenderer.icon.hasOwnProperty('iconType')) {
+                if (badge.liveChatAuthorBadgeRenderer.icon.iconType == 'MODERATOR') {
                     return true;
                 }
         }
@@ -199,10 +200,11 @@ function YCE_isModerator(authorBadges) {
 
 function YCE_isOwner(authorBadges) {
     for (let j = 0; j < authorBadges.length; j++) {
-        if (authorBadges[j].hasOwnProperty('liveChatAuthorBadgeRenderer')
-            && authorBadges[j].liveChatAuthorBadgeRenderer
-            && authorBadges[j].liveChatAuthorBadgeRenderer.hasOwnProperty('tooltip')) {
-                if (authorBadges[j].liveChatAuthorBadgeRenderer.tooltip == 'Владелец') {
+        let badge = authorBadges[j];
+        if (badge.hasOwnProperty('liveChatAuthorBadgeRenderer')
+            && badge.liveChatAuthorBadgeRenderer.hasOwnProperty('icon')
+            && badge.liveChatAuthorBadgeRenderer.icon.hasOwnProperty('iconType')) {
+                if (badge.liveChatAuthorBadgeRenderer.icon.iconType == 'OWNER') {
                     return true;
                 }
         }
